@@ -4,93 +4,89 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ChemBattle - مختبر الروابط التفاعلي</title>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fdf6ee;--ink:#0f2a1d;--panel:rgba(253,246,238,.86);--line:rgba(15,42,29,.16);--blue:#3b8fd6;--green:#2fa878;--gold:#e09a0b;--purple:#8f6df0;--orange:#f08a4b;--lav:#b39ae8;--txt:#0f2a1d;--dim:#5b6b62}
+:root{--bg:#0f172a;--panel:rgba(15,23,42,.78);--line:rgba(148,163,184,.25);--blue:#38bdf8;--green:#34d399;--gold:#fbbf24;--purple:#a78bfa;--txt:#e2e8f0;--dim:#94a3b8}
 *{box-sizing:border-box;margin:0}
-body{background:var(--lav);color:var(--txt);font-family:'Cairo',Tahoma,sans-serif;min-height:100vh;line-height:1.7;padding:clamp(0px,3vw,40px)}
-/* إطار الصفحة الكريمي مع خلايا مائية (مستوحى من التصميم المرجعي) */
-.shell{position:relative;max-width:1320px;margin:auto;background:var(--bg);border-radius:20px;overflow:hidden;box-shadow:0 30px 80px rgba(60,30,110,.25)}
-.cells{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.55}
-header,.hero,main,footer{position:relative;z-index:1}
-header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:18px 28px}
-h1{font-family:'Amiri',serif;font-size:clamp(1.2rem,3vw,1.7rem);font-weight:700;color:var(--ink)}
-.btn{font:inherit;font-weight:600;cursor:pointer;color:var(--ink);background:transparent;border:0;border-bottom:2px solid transparent;border-radius:0;padding:6px 6px;transition:.2s}
-.btn:hover{border-bottom-color:var(--orange)}
-.btn.go{background:var(--ink);color:var(--bg);border-radius:999px;font-weight:800;font-size:1.05rem;padding:10px 28px;border:0}
-.btn.go:hover{transform:scale(1.05)}
-.btn.gold{border:1px solid var(--ink);border-radius:999px;padding:6px 16px}
-.btn.gold:hover{background:var(--ink);color:var(--bg)}
-/* ترويسة كبيرة بخط سيريف */
-.hero{padding:10px 28px 30px;min-height:360px}
-.hero .h{font-family:'Amiri',serif;font-weight:700;color:var(--ink);font-size:clamp(2.8rem,10vw,7rem);line-height:1.15}
-.hero .h2{text-align:left;margin-top:-.1em}
-.hnotes{max-width:380px;margin-right:auto;margin-top:26px}
-.hnotes h3{font-family:'Amiri',serif;font-size:1.35rem;margin-top:12px}
-.hnotes p{color:var(--dim);font-size:.95rem}
-.hero .no{color:var(--green);font-size:.8rem;letter-spacing:.2em}
-.arrows{display:flex;flex-direction:column;gap:6px;width:22px;margin:14px 0 0;color:var(--orange);font-size:1.4rem;text-decoration:none;line-height:1}
-.arrows a{color:var(--orange);text-decoration:none}
-main{display:grid;grid-template-columns:1fr 290px;gap:18px;padding:18px 28px 28px}
-@media(max-width:900px){main{grid-template-columns:1fr;padding:12px}.hero{padding:6px 14px}}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:16px;backdrop-filter:blur(8px)}
-h2{font-family:'Amiri',serif;font-size:1.35rem;margin-bottom:10px;color:var(--ink)}
-.card{width:92px;padding:8px 4px;text-align:center;border-radius:14px;cursor:grab;border:2px solid var(--c);background:#fff;box-shadow:0 4px 14px -6px var(--c);transition:.2s;user-select:none}
-.card:hover{transform:translateY(-6px) scale(1.05);box-shadow:0 10px 22px -6px var(--c)}
-.card b{display:block;font-family:'Amiri',serif;font-size:1.8rem;color:var(--c);line-height:1.2}
-.card small{display:block;font-size:.75rem;color:var(--dim)}
+body{background:var(--bg);color:var(--txt);font-family:'Cairo',Tahoma,sans-serif;min-height:100vh;line-height:1.7}
+/* ===== خلفية الموشور (Prism WebGL) ===== */
+#aura{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+#prism{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.75;pointer-events:none}
+.atom,.e{z-index:1}
+#veil{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(15,23,42,.05),rgba(15,23,42,.6) 90%)}
+header,main,footer{position:relative;z-index:1}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px)}
+h1{font-size:clamp(1.1rem,3vw,1.7rem);font-weight:800;background:linear-gradient(90deg,var(--blue),var(--green),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn{font:inherit;font-weight:600;cursor:pointer;color:var(--txt);background:rgba(56,189,248,.12);border:1px solid var(--blue);border-radius:12px;padding:8px 16px;transition:.2s}
+.btn:hover{background:rgba(56,189,248,.3);box-shadow:0 0 16px rgba(56,189,248,.5)}
+.btn.go{background:linear-gradient(90deg,#0ea5e9,#10b981);border:0;color:#04121f;font-weight:800;font-size:1.05rem;padding:10px 26px}
+.btn.gold{border-color:var(--gold);background:rgba(251,191,36,.12)}
+main{display:grid;grid-template-columns:1fr 290px;gap:18px;padding:18px 22px;max-width:1300px;margin:auto}
+@media(max-width:900px){main{grid-template-columns:1fr;padding:12px}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;backdrop-filter:blur(10px)}
+h2{font-size:1.15rem;margin-bottom:10px;color:var(--blue)}
+/* بطاقات العناصر */
 #cards{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.card{width:92px;padding:8px 4px;text-align:center;border-radius:14px;cursor:grab;border:2px solid var(--c);background:linear-gradient(160deg,#1e293b,#0b1220);box-shadow:0 0 12px -2px var(--c);transition:.2s;user-select:none}
+.card:hover{transform:translateY(-6px) scale(1.05);box-shadow:0 0 22px var(--c)}
+.card b{display:block;font-size:1.7rem;color:var(--c);line-height:1.2}
+.card small{display:block;font-size:.75rem;color:var(--dim)}
+.card .z{position:absolute}
+/* منطقة الدمج */
 #fusion{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;margin:14px 0}
 .slot{width:150px;min-height:100px;border:2px dashed var(--line);border-radius:16px;display:grid;place-items:center;text-align:center;padding:8px;cursor:pointer;color:var(--dim);transition:.2s}
-.slot.over{border-color:var(--green);background:rgba(47,168,120,.12)}
-.slot.full{border-style:solid;color:var(--ink);background:#fff}
-.slot b{font-family:'Amiri',serif;font-size:2rem;display:block;line-height:1.2}
-/* المسرح: نافذة داكنة تحتضن الموشور */
-#stage{direction:ltr;position:relative;height:260px;border-radius:22px;background:#0e1f18;overflow:hidden}
-#prism{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.7;pointer-events:none}
-.atom{position:absolute;z-index:1;top:50%;width:clamp(64px,18vw,92px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);display:grid;place-items:center;font-family:'Amiri',serif;font-weight:700;font-size:1.8rem;color:#fff;background:radial-gradient(circle at 35% 30%,#1e3a2c,#08130e);border:2px solid var(--blue);box-shadow:0 0 22px var(--blue);opacity:0;transition:opacity .4s,box-shadow .6s,border-color .6s}
-.atom .lab{position:absolute;top:-30px;font-size:1.25rem;color:#fcd34d;min-width:40px;text-align:center}
-.e{position:absolute;z-index:1;left:50%;top:50%;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 12px 4px #fde047;transform:translate(-50%,-50%);opacity:0;transition:left 1.6s ease-in-out,top 1.6s ease-in-out,opacity .4s;animation:glow 1s infinite alternate}
+.slot.over{border-color:var(--green);background:rgba(52,211,153,.1)}
+.slot.full{border-style:solid;color:var(--txt)}
+.slot b{font-size:2rem;display:block;line-height:1.2}
+/* المسرح */
+#stage{direction:ltr;position:relative;height:260px;border-radius:16px;border:1px solid var(--line);background:#0b1220;overflow:hidden}
+.atom{position:absolute;top:50%;width:clamp(64px,18vw,92px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);display:grid;place-items:center;font-weight:800;font-size:1.6rem;background:radial-gradient(circle at 35% 30%,#1e293b,#0b1220);border:2px solid var(--blue);box-shadow:0 0 22px var(--blue);opacity:0;transition:opacity .4s,box-shadow .6s,border-color .6s}
+.atom .lab{position:absolute;top:-30px;font-size:1.25rem;color:var(--gold);min-width:40px;text-align:center}
+.e{position:absolute;left:50%;top:50%;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 12px 4px #fde047;transform:translate(-50%,-50%);opacity:0;transition:left 1.6s ease-in-out,top 1.6s ease-in-out,opacity .4s;animation:glow 1s infinite alternate}
 @keyframes glow{to{box-shadow:0 0 20px 8px #fde047}}
-#scaleWrap{direction:ltr;margin:30px 6px 6px}
-#scale{position:relative;height:14px;border-radius:9px;background:linear-gradient(90deg,#8f6df0 0%,#2fa878 6%,#2fa878 11%,#3b8fd6 14%,#3b8fd6 50%,#e09a0b 54%,#e09a0b 100%)}
+/* مقياس الكهروسالبية */
+#scaleWrap{direction:ltr;margin:18px 6px 6px}
+#scale{position:relative;height:16px;border-radius:9px;background:linear-gradient(90deg,#a78bfa 0%,#34d399 6%,#34d399 11%,#38bdf8 14%,#38bdf8 50%,#fbbf24 54%,#fbbf24 100%)}
 #ptr{position:absolute;top:-10px;left:0;width:0;transition:left 1.8s cubic-bezier(.3,1.3,.5,1)}
-#ptr i{position:absolute;transform:translateX(-50%);width:6px;height:34px;border-radius:3px;background:var(--ink)}
-#ptr span{position:absolute;top:-30px;transform:translateX(-50%);background:var(--ink);color:var(--bg);font-weight:800;border-radius:8px;padding:0 8px;font-size:.85rem;white-space:nowrap}
+#ptr i{position:absolute;transform:translateX(-50%);width:6px;height:36px;border-radius:3px;background:#fff;box-shadow:0 0 12px #fff}
+#ptr span{position:absolute;top:-30px;transform:translateX(-50%);background:#fff;color:#0f172a;font-weight:800;border-radius:8px;padding:0 8px;font-size:.85rem;white-space:nowrap}
 .ticks{position:relative;height:30px;font-size:.75rem;color:var(--dim)}
 .ticks span{position:absolute;transform:translateX(-50%);margin-top:10px}
+/* بطاقة النتيجة */
 #result{display:none;margin-top:14px;border-right:6px solid var(--rc,var(--blue));animation:pop .5s}
-#result h3{font-family:'Amiri',serif;font-size:1.3rem}
+#result h3{color:var(--rc)}
 #result .big{font-size:2rem;font-weight:800;color:var(--rc)}
 @keyframes pop{from{transform:scale(.92);opacity:0}}
 .note{font-size:.88rem;color:var(--dim);margin-top:6px}
+/* سجل + تحدي */
 #log{list-style:none;padding:0;max-height:420px;overflow:auto}
 #log li{padding:6px 8px;border-bottom:1px solid var(--line);font-size:.9rem}
 #log li span{float:left;color:var(--dim)}
-#challenge{display:none;margin-top:12px;border:1px solid var(--orange);border-radius:14px;padding:10px 14px;text-align:center;background:#fff7ef}
-#challenge .q{font-family:'Amiri',serif;font-size:1.4rem;font-weight:700;color:var(--orange)}
-#tbar{height:8px;background:rgba(15,42,29,.1);border-radius:5px;margin:8px 0;overflow:hidden}
-#tbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--green),var(--orange))}
+#challenge{display:none;margin-top:12px;border:1px solid var(--gold);border-radius:14px;padding:10px 14px;text-align:center}
+#challenge .q{font-size:1.25rem;font-weight:800;color:var(--gold)}
+#tbar{height:8px;background:#1e293b;border-radius:5px;margin:8px 0;overflow:hidden}
+#tbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--green),var(--gold))}
 .win{animation:winf .8s}.lose{animation:shake .4s}
 @keyframes winf{50%{box-shadow:0 0 40px var(--green)}}
 @keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-#toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);z-index:30;background:var(--ink);color:var(--bg);padding:8px 18px;border-radius:20px;font-weight:700;display:none}
-.modal{position:fixed;inset:0;z-index:20;background:rgba(15,42,29,.6);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:18px}
+#toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);z-index:30;background:#fff;color:#0f172a;padding:8px 18px;border-radius:20px;font-weight:700;display:none}
+/* نوافذ */
+.modal{position:fixed;inset:0;z-index:20;background:rgba(2,6,23,.85);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:18px}
 .modal.open{display:flex}
-.mbox{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:20px;max-width:860px;width:100%}
+.mbox{background:#0f172a;border:1px solid var(--blue);border-radius:18px;padding:20px;max-width:860px;width:100%}
 .mbox ul{padding-inline-start:22px}
 table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.9rem}
 th,td{border:1px solid var(--line);padding:6px 8px;text-align:center}
-th{background:rgba(179,154,232,.3)}
+th{background:rgba(56,189,248,.15)}
 #ptable{direction:ltr;display:grid;grid-template-columns:repeat(8,1fr);gap:4px;max-width:520px;margin:10px auto}
 #ptable div{text-align:center;border-radius:8px;padding:6px 0;font-weight:700;cursor:pointer;border:1px solid var(--line);min-height:38px}
 #ptable div.empty{border:0}
-#pread{text-align:center;color:#6d3fc0;min-height:28px;font-weight:700}
-input.name{font:inherit;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 10px;width:260px;max-width:100%}
+#pread{text-align:center;color:var(--gold);min-height:28px;font-weight:700}
+input.name{font:inherit;background:#1e293b;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:6px 10px;width:260px;max-width:100%}
 footer{text-align:center;padding:18px;color:var(--dim);font-size:.9rem}
+/* الطباعة: يظهر التقرير فقط */
 @media print{
  body>*:not(#reportModal){display:none!important}
- body{padding:0;background:#fff}
  #reportModal{position:static;background:#fff;display:block;padding:0}
  .mbox{background:#fff;color:#000;border:0;max-width:none}
  .mbox *{color:#000!important}
@@ -99,22 +95,7 @@ footer{text-align:center;padding:18px;color:var(--dim);font-size:.9rem}
 </style>
 </head>
 <body>
-<div class="shell">
-<!-- خلايا مائية زخرفية (SVG) مستوحاة من التصميم المرجعي -->
-<svg class="cells" aria-hidden="true" viewBox="0 0 1200 1000" preserveAspectRatio="xMidYMid slice">
- <defs>
-  <filter id="wc" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="3" seed="4"/><feDisplacementMap in="SourceGraphic" scale="30"/><feGaussianBlur stdDeviation="1.4"/></filter>
-  <radialGradient id="cg"><stop offset="0" stop-color="#fff"/><stop offset=".65" stop-color="#ece5f8"/><stop offset="1" stop-color="#cde6d9"/></radialGradient>
- </defs>
- <g filter="url(#wc)">
-  <circle cx="1000" cy="20" r="210" fill="url(#cg)" stroke="#4f9d7b" stroke-width="28"/>
-  <circle cx="1040" cy="70" r="70" fill="#7c4fb0" opacity=".5"/>
-  <circle cx="-40" cy="430" r="150" fill="url(#cg)" stroke="#4f9d7b" stroke-width="22"/>
-  <circle cx="-10" cy="450" r="50" fill="#7c4fb0" opacity=".45"/>
-  <circle cx="330" cy="1010" r="300" fill="url(#cg)" stroke="#4f9d7b" stroke-width="30"/>
-  <circle cx="380" cy="960" r="110" fill="#7c4fb0" opacity=".5"/>
- </g>
-</svg>
+<canvas id="aura"></canvas><div id="veil"></div>
 
 <header>
   <h1>⚛ ChemBattle - مختبر الروابط التفاعلي</h1>
@@ -124,18 +105,6 @@ footer{text-align:center;padding:18px;color:var(--dim);font-size:.9rem}
   </div>
 </header>
 
-<section class="hero">
-  <div class="no">01</div>
-  <div class="h">ذرتان.</div>
-  <div class="h h2">رابطة واحدة.</div>
-  <div class="hnotes">
-    <h3>الرابطة الأيونية</h3>
-    <p>عندما يتجاوز الفرق في الكهروسالبية 1.7 ينتقل الإلكترون من الفلز إلى اللافلز.</p>
-    <h3>الرابطة التساهمية القطبية</h3>
-    <p>بين 0.4 و1.7 تتشارك الذرتان الإلكترونات بتفاوت فتظهر شحنتان جزئيتان δ+ وδ−.</p>
-    <div class="arrows"><a href="#arena">↓</a></div>
-  </div>
-</section>
 <main>
  <section>
   <div class="panel" id="arena">
@@ -156,7 +125,7 @@ footer{text-align:center;padding:18px;color:var(--dim);font-size:.9rem}
       <div style="display:flex;flex-direction:column;gap:8px">
         <button class="btn go" id="goBtn">ابدأ التفاعل</button>
         <button class="btn" id="clrBtn">مسح الخانتين</button>
-        <button class="btn gold" id="chBtn"> تحدي </button>
+        <button class="btn gold" id="chBtn">🎯 التحدي</button>
       </div>
     </div>
 
@@ -188,9 +157,8 @@ footer{text-align:center;padding:18px;color:var(--dim);font-size:.9rem}
 
 <footer>
   <!-- ✏ عدّل اسمك هنا قبل الرفع على GitHub -->
-  تصميم وبرمجة: <b id="authorName">  غنى أيمن الحمد</b> 
+  تصميم وبرمجة: <b id="authorName">غنى أيمن الحمد</b>
 </footer>
-</div><!-- نهاية الإطار -->
 <div id="toast"></div>
 
 <!-- نافذة ملخص الدرس -->
@@ -223,7 +191,7 @@ footer{text-align:center;padding:18px;color:var(--dim);font-size:.9rem}
     <div style="display:flex;gap:8px"><button class="btn go" onclick="window.print()">طباعة / حفظ PDF</button><button class="btn" onclick="closeM('reportModal')">✕ إغلاق</button></div>
   </div>
   <h2 style="text-align:center">ChemBattle — ملخص درس الكهروسالبية والقطبية</h2>
-  <p> غنى أيمن الحمد : <input class="name" id="studentName" placeholder="اكتب الاسم هنا"> &nbsp; التاريخ: <span id="rDate"></span></p>
+  <p>اسم الطالب / المعلم: <input class="name" id="studentName" placeholder="اكتب الاسم هنا"> &nbsp; التاريخ: <span id="rDate"></span></p>
   <h2>القواعد الأساسية</h2>
   <ul>
     <li>ΔEN = |EN₁ − EN₂|</li>
@@ -238,7 +206,54 @@ footer{text-align:center;padding:18px;color:var(--dim);font-size:.9rem}
 
 <script>
 /* ============================================================
-   1) خلفية الموشور — نسخة JavaScript خالصة من مكوّن PrismBackground
+   0) خلفية الأورا (Aura): تموجات متوهجة بألوان الموشور (WebGL خفيف)
+   ============================================================ */
+(function(){
+  const cv=document.getElementById('aura');
+  const gl=cv.getContext('webgl',{antialias:false});
+  if(!gl){cv.remove();return;}
+  const vs='attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  const fs=`precision highp float;
+  uniform vec2 R;uniform float T;
+  void main(){
+    vec2 uv=gl_FragCoord.xy/R;
+    float asp=R.x/R.y;
+    vec3 col=vec3(0.059,0.090,0.165);              // لون الخلفية #0f172a
+    for(int i=0;i<5;i++){
+      float k=float(i);
+      float w=sin(uv.x*(2.5+k*.7)*asp+T*(.35+k*.07)+k*1.9)*.10
+             +sin(uv.x*(6.0+k)*asp-T*.5+k)*.03;
+      float d=abs(uv.y-(.22+.14*k)-w);              // بعد البكسل عن خط الموجة
+      vec3 hue=.5+.5*sin(vec3(0.,1.,2.)+k*1.2+T*.25); // نفس تدرج ألوان الموشور
+      col+=hue*.016/(d+.025);                       // توهج ناعم حول الموجة
+    }
+    col*=.62+.38*sin(uv.x*3.+T*.2);                 // تنفّس خفيف للسطوع
+    gl_FragColor=vec4(clamp(col,0.,1.),1.);
+  }`;
+  const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o;};
+  const pr=gl.createProgram();
+  gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));
+  gl.linkProgram(pr);
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){cv.remove();return;}
+  gl.useProgram(pr);
+  gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+  const l=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(l);gl.vertexAttribPointer(l,2,gl.FLOAT,false,0,0);
+  const uR=gl.getUniformLocation(pr,'R'),uT=gl.getUniformLocation(pr,'T');
+  function resize(){const k=.4; // دقة منخفضة لأن الأورا ناعمة أصلاً
+    cv.width=Math.max(2,Math.floor(innerWidth*k));cv.height=Math.max(2,Math.floor(innerHeight*k));
+    gl.viewport(0,0,cv.width,cv.height);gl.uniform2f(uR,cv.width,cv.height);}
+  addEventListener('resize',resize);resize();
+  const t0=performance.now();let last=0,raf=0;
+  function draw(now){gl.uniform1f(uT,(now-t0)/1000);gl.drawArrays(gl.TRIANGLES,0,3);}
+  function frame(now){raf=requestAnimationFrame(frame);if(now-last<33)return;last=now;draw(now);}
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){draw(3000);return;}
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(raf);raf=0}else if(!raf)raf=requestAnimationFrame(frame)});
+  raf=requestAnimationFrame(frame);
+})();
+
+/* ============================================================
+   1) الموشور داخل نافذة التفاعل — نسخة JavaScript خالصة من مكوّن PrismBackground
    (WebGL مباشر بدون React أو OGL ليعمل الملف وحده على GitHub Pages)
    عدّل القيم من هنا: ============================================ */
 (function(){
@@ -331,10 +346,10 @@ const EL=[
  {s:'Cs',n:'السيزيوم',en:0.79,t:'فلز',z:55},{s:'Mg',n:'المغنيسيوم',en:1.31,t:'فلز',z:12}
 ];
 const TYPES={
- ionic:{name:'رابطة أيونية غالباً',c:'#e09a0b'},
- polar:{name:'رابطة تساهمية قطبية',c:'#3b8fd6'},
- nonpolar:{name:'رابطة تساهمية غير قطبية',c:'#2fa878'},
- pure:{name:'رابطة تساهمية نقية',c:'#8f6df0'}
+ ionic:{name:'رابطة أيونية غالباً',c:'#fbbf24'},
+ polar:{name:'رابطة تساهمية قطبية',c:'#38bdf8'},
+ nonpolar:{name:'رابطة تساهمية غير قطبية',c:'#34d399'},
+ pure:{name:'رابطة تساهمية نقية',c:'#a78bfa'}
 };
 const $=s=>document.querySelector(s);
 const slot=[null,null];let busy=false;
@@ -357,7 +372,7 @@ function closeM(id){$('#'+id).classList.remove('open')}
    ============================================================ */
 EL.forEach((e,i)=>{
   const d=document.createElement('div');d.className='card';d.draggable=true;
-  d.style.setProperty('--c',e.t==='فلز'?'var(--gold)':'var(--blue)');
+  d.style.setProperty('--c',e.t==='فلز'?'#fbbf24':'#38bdf8');
   d.innerHTML=`<b>${e.s}</b><div>${e.n}</div><small>EN = ${e.en.toFixed(2)}</small><small>${e.t} • ${e.z}</small>`;
   d.onclick=()=>{ if(busy)return; if(slot[0]===null)slot[0]=i;else if(slot[1]===null)slot[1]=i;else slot[1]=i; tone(600,.1); drawSlots();};
   d.ondragstart=ev=>ev.dataTransfer.setData('text/plain',i);
@@ -374,7 +389,7 @@ function drawSlots(){
   [0,1].forEach(k=>{
     const s=$('#s'+k),e=EL[slot[k]];
     s.classList.toggle('full',!!e);
-    s.innerHTML=e?`<div><b style="color:${e.t==='فلز'?'var(--gold)':'var(--blue)'}">${e.s}</b>${e.n}<br><small>EN = ${e.en.toFixed(2)}</small></div>`
+    s.innerHTML=e?`<div><b style="color:${e.t==='فلز'?'#fbbf24':'#38bdf8'}">${e.s}</b>${e.n}<br><small>EN = ${e.en.toFixed(2)}</small></div>`
                  :`<div>${k?'الذرة الثانية':'الذرة الأولى'}<br><small>اسحب بطاقة أو انقر</small></div>`;
   });
   // معاينة الذرتين على المسرح: الذرة الأولى يميناً والثانية يساراً
@@ -470,7 +485,7 @@ function addLog(a,b,d,type){
 }
 
 /* ============================================================
-   5) وضع تحدي المعلم (20 ثانية لكل سؤال)
+   5) وضع التحدي (20 ثانية لكل سؤال)
    ============================================================ */
 const QS=[
  {t:'polar',txt:'كوّن رابطة تساهمية قطبية!'},{t:'ionic',txt:'كوّن رابطة أيونية قوية!'},
@@ -483,7 +498,7 @@ function startChallenge(){
   clearInterval(ch.h);ch={on:true,wait:false,i:0,score:0,q:null,left:TIME,h:0};
   $('#challenge').style.display='block';$('#chBtn').textContent='⏹ إنهاء التحدي';nextQ();
 }
-function endChallenge(){clearInterval(ch.h);ch.on=false;$('#challenge').style.display='none';$('#chBtn').textContent='🎯 تحدي المعلم';}
+function endChallenge(){clearInterval(ch.h);ch.on=false;$('#challenge').style.display='none';$('#chBtn').textContent='🎯 التحدي';}
 function nextQ(){
   if(ch.i>=TOTAL){
     clearInterval(ch.h);const max=TOTAL*20;
@@ -526,7 +541,7 @@ PT.flat().forEach(c=>{
   const d=document.createElement('div');
   if(!c){d.className='empty';}
   else{d.textContent=c[0];
-    d.style.background=c[1]===null?'rgba(148,163,184,.08)':`rgba(63,155,118,${.08+c[1]/4*.8})`;
+    d.style.background=c[1]===null?'rgba(148,163,184,.08)':`rgba(56,189,248,${.08+c[1]/4*.8})`;
     const say=()=>$('#pread').textContent=c[1]===null?c[0]+': لا توجد قيمة كهروسالبية معتمدة (غاز نبيل)':c[0]+': الكهروسالبية = '+c[1].toFixed(2);
     d.onmouseenter=say;d.onclick=say;}
   $('#ptable').appendChild(d);
