@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChemBattle - مختبر الروابط التفاعلي</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fdf6ee;--ink:#0f2a1d;--panel:rgba(253,246,238,.86);--line:rgba(15,42,29,.16);--blue:#3b8fd6;--green:#2fa878;--gold:#e09a0b;--purple:#8f6df0;--orange:#f08a4b;--lav:#b39ae8;--txt:#0f2a1d;--dim:#5b6b62}
+*{box-sizing:border-box;margin:0}
+body{background:var(--lav);color:var(--txt);font-family:'Cairo',Tahoma,sans-serif;min-height:100vh;line-height:1.7;padding:clamp(0px,3vw,40px)}
+/* إطار الصفحة الكريمي مع خلايا مائية (مستوحى من التصميم المرجعي) */
+.shell{position:relative;max-width:1320px;margin:auto;background:var(--bg);border-radius:20px;overflow:hidden;box-shadow:0 30px 80px rgba(60,30,110,.25)}
+.cells{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.55}
+header,.hero,main,footer{position:relative;z-index:1}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:18px 28px}
+h1{font-family:'Amiri',serif;font-size:clamp(1.2rem,3vw,1.7rem);font-weight:700;color:var(--ink)}
+.btn{font:inherit;font-weight:600;cursor:pointer;color:var(--ink);background:transparent;border:0;border-bottom:2px solid transparent;border-radius:0;padding:6px 6px;transition:.2s}
+.btn:hover{border-bottom-color:var(--orange)}
+.btn.go{background:var(--ink);color:var(--bg);border-radius:999px;font-weight:800;font-size:1.05rem;padding:10px 28px;border:0}
+.btn.go:hover{transform:scale(1.05)}
+.btn.gold{border:1px solid var(--ink);border-radius:999px;padding:6px 16px}
+.btn.gold:hover{background:var(--ink);color:var(--bg)}
+/* ترويسة كبيرة بخط سيريف */
+.hero{padding:10px 28px 30px;min-height:360px}
+.hero .h{font-family:'Amiri',serif;font-weight:700;color:var(--ink);font-size:clamp(2.8rem,10vw,7rem);line-height:1.15}
+.hero .h2{text-align:left;margin-top:-.1em}
+.hnotes{max-width:380px;margin-right:auto;margin-top:26px}
+.hnotes h3{font-family:'Amiri',serif;font-size:1.35rem;margin-top:12px}
+.hnotes p{color:var(--dim);font-size:.95rem}
+.hero .no{color:var(--green);font-size:.8rem;letter-spacing:.2em}
+.arrows{display:flex;flex-direction:column;gap:6px;width:22px;margin:14px 0 0;color:var(--orange);font-size:1.4rem;text-decoration:none;line-height:1}
+.arrows a{color:var(--orange);text-decoration:none}
+main{display:grid;grid-template-columns:1fr 290px;gap:18px;padding:18px 28px 28px}
+@media(max-width:900px){main{grid-template-columns:1fr;padding:12px}.hero{padding:6px 14px}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:16px;backdrop-filter:blur(8px)}
+h2{font-family:'Amiri',serif;font-size:1.35rem;margin-bottom:10px;color:var(--ink)}
+.card{width:92px;padding:8px 4px;text-align:center;border-radius:14px;cursor:grab;border:2px solid var(--c);background:#fff;box-shadow:0 4px 14px -6px var(--c);transition:.2s;user-select:none}
+.card:hover{transform:translateY(-6px) scale(1.05);box-shadow:0 10px 22px -6px var(--c)}
+.card b{display:block;font-family:'Amiri',serif;font-size:1.8rem;color:var(--c);line-height:1.2}
+.card small{display:block;font-size:.75rem;color:var(--dim)}
+#cards{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+#fusion{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;margin:14px 0}
+.slot{width:150px;min-height:100px;border:2px dashed var(--line);border-radius:16px;display:grid;place-items:center;text-align:center;padding:8px;cursor:pointer;color:var(--dim);transition:.2s}
+.slot.over{border-color:var(--green);background:rgba(47,168,120,.12)}
+.slot.full{border-style:solid;color:var(--ink);background:#fff}
+.slot b{font-family:'Amiri',serif;font-size:2rem;display:block;line-height:1.2}
+/* المسرح: نافذة داكنة تحتضن الموشور */
+#stage{direction:ltr;position:relative;height:260px;border-radius:22px;background:#0e1f18;overflow:hidden}
+#prism{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.7;pointer-events:none}
+.atom{position:absolute;z-index:1;top:50%;width:clamp(64px,18vw,92px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);display:grid;place-items:center;font-family:'Amiri',serif;font-weight:700;font-size:1.8rem;color:#fff;background:radial-gradient(circle at 35% 30%,#1e3a2c,#08130e);border:2px solid var(--blue);box-shadow:0 0 22px var(--blue);opacity:0;transition:opacity .4s,box-shadow .6s,border-color .6s}
+.atom .lab{position:absolute;top:-30px;font-size:1.25rem;color:#fcd34d;min-width:40px;text-align:center}
+.e{position:absolute;z-index:1;left:50%;top:50%;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 12px 4px #fde047;transform:translate(-50%,-50%);opacity:0;transition:left 1.6s ease-in-out,top 1.6s ease-in-out,opacity .4s;animation:glow 1s infinite alternate}
+@keyframes glow{to{box-shadow:0 0 20px 8px #fde047}}
+#scaleWrap{direction:ltr;margin:30px 6px 6px}
+#scale{position:relative;height:14px;border-radius:9px;background:linear-gradient(90deg,#8f6df0 0%,#2fa878 6%,#2fa878 11%,#3b8fd6 14%,#3b8fd6 50%,#e09a0b 54%,#e09a0b 100%)}
+#ptr{position:absolute;top:-10px;left:0;width:0;transition:left 1.8s cubic-bezier(.3,1.3,.5,1)}
+#ptr i{position:absolute;transform:translateX(-50%);width:6px;height:34px;border-radius:3px;background:var(--ink)}
+#ptr span{position:absolute;top:-30px;transform:translateX(-50%);background:var(--ink);color:var(--bg);font-weight:800;border-radius:8px;padding:0 8px;font-size:.85rem;white-space:nowrap}
+.ticks{position:relative;height:30px;font-size:.75rem;color:var(--dim)}
+.ticks span{position:absolute;transform:translateX(-50%);margin-top:10px}
+#result{display:none;margin-top:14px;border-right:6px solid var(--rc,var(--blue));animation:pop .5s}
+#result h3{font-family:'Amiri',serif;font-size:1.3rem}
+#result .big{font-size:2rem;font-weight:800;color:var(--rc)}
+@keyframes pop{from{transform:scale(.92);opacity:0}}
+.note{font-size:.88rem;color:var(--dim);margin-top:6px}
+#log{list-style:none;padding:0;max-height:420px;overflow:auto}
+#log li{padding:6px 8px;border-bottom:1px solid var(--line);font-size:.9rem}
+#log li span{float:left;color:var(--dim)}
+#challenge{display:none;margin-top:12px;border:1px solid var(--orange);border-radius:14px;padding:10px 14px;text-align:center;background:#fff7ef}
+#challenge .q{font-family:'Amiri',serif;font-size:1.4rem;font-weight:700;color:var(--orange)}
+#tbar{height:8px;background:rgba(15,42,29,.1);border-radius:5px;margin:8px 0;overflow:hidden}
+#tbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--green),var(--orange))}
+.win{animation:winf .8s}.lose{animation:shake .4s}
+@keyframes winf{50%{box-shadow:0 0 40px var(--green)}}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+#toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);z-index:30;background:var(--ink);color:var(--bg);padding:8px 18px;border-radius:20px;font-weight:700;display:none}
+.modal{position:fixed;inset:0;z-index:20;background:rgba(15,42,29,.6);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:18px}
+.modal.open{display:flex}
+.mbox{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:20px;max-width:860px;width:100%}
+.mbox ul{padding-inline-start:22px}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.9rem}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:center}
+th{background:rgba(179,154,232,.3)}
+#ptable{direction:ltr;display:grid;grid-template-columns:repeat(8,1fr);gap:4px;max-width:520px;margin:10px auto}
+#ptable div{text-align:center;border-radius:8px;padding:6px 0;font-weight:700;cursor:pointer;border:1px solid var(--line);min-height:38px}
+#ptable div.empty{border:0}
+#pread{text-align:center;color:#6d3fc0;min-height:28px;font-weight:700}
+input.name{font:inherit;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 10px;width:260px;max-width:100%}
+footer{text-align:center;padding:18px;color:var(--dim);font-size:.9rem}
+@media print{
+ body>*:not(#reportModal){display:none!important}
+ body{padding:0;background:#fff}
+ #reportModal{position:static;background:#fff;display:block;padding:0}
+ .mbox{background:#fff;color:#000;border:0;max-width:none}
+ .mbox *{color:#000!important}
+ th{background:#eee!important}.noprint{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<!-- خلايا مائية زخرفية (SVG) مستوحاة من التصميم المرجعي -->
+<svg class="cells" aria-hidden="true" viewBox="0 0 1200 1000" preserveAspectRatio="xMidYMid slice">
+ <defs>
+  <filter id="wc" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="3" seed="4"/><feDisplacementMap in="SourceGraphic" scale="30"/><feGaussianBlur stdDeviation="1.4"/></filter>
+  <radialGradient id="cg"><stop offset="0" stop-color="#fff"/><stop offset=".65" stop-color="#ece5f8"/><stop offset="1" stop-color="#cde6d9"/></radialGradient>
+ </defs>
+ <g filter="url(#wc)">
+  <circle cx="1000" cy="20" r="210" fill="url(#cg)" stroke="#4f9d7b" stroke-width="28"/>
+  <circle cx="1040" cy="70" r="70" fill="#7c4fb0" opacity=".5"/>
+  <circle cx="-40" cy="430" r="150" fill="url(#cg)" stroke="#4f9d7b" stroke-width="22"/>
+  <circle cx="-10" cy="450" r="50" fill="#7c4fb0" opacity=".45"/>
+  <circle cx="330" cy="1010" r="300" fill="url(#cg)" stroke="#4f9d7b" stroke-width="30"/>
+  <circle cx="380" cy="960" r="110" fill="#7c4fb0" opacity=".5"/>
+ </g>
+</svg>
+
+<header>
+  <h1>⚛ ChemBattle - مختبر الروابط التفاعلي</h1>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn" onclick="openM('summaryModal')">📘 ملخص الدرس الشامل</button>
+    <button class="btn gold" onclick="openReport()">🖨 توليد بطاقة الملخص للطباعة</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="no">01</div>
+  <div class="h">ذرتان.</div>
+  <div class="h h2">رابطة واحدة.</div>
+  <div class="hnotes">
+    <h3>الرابطة الأيونية</h3>
+    <p>عندما يتجاوز الفرق في الكهروسالبية 1.7 ينتقل الإلكترون من الفلز إلى اللافلز.</p>
+    <h3>الرابطة التساهمية القطبية</h3>
+    <p>بين 0.4 و1.7 تتشارك الذرتان الإلكترونات بتفاوت فتظهر شحنتان جزئيتان δ+ وδ−.</p>
+    <div class="arrows"><a href="#arena">↓</a></div>
+  </div>
+</section>
+<main>
+ <section>
+  <div class="panel" id="arena">
+    <h2>⚔ ساحة المعركة الكيميائية</h2>
+    <p class="note" style="margin:0 0 10px">اختر بطاقتين بالنقر أو اسحبهما إلى الخانتين (يمكن اختيار العنصر نفسه مرتين).</p>
+    <div id="cards"></div>
+
+    <div id="challenge">
+      <div class="q" id="chQ"></div>
+      <div id="tbar"><i></i></div>
+      <div id="chInfo"></div>
+    </div>
+
+    <div id="fusion">
+      <div class="slot" id="s0" data-k="0"></div>
+      <div style="font-size:2rem;color:var(--green)">＋</div>
+      <div class="slot" id="s1" data-k="1"></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn go" id="goBtn">ابدأ التفاعل</button>
+        <button class="btn" id="clrBtn">مسح الخانتين</button>
+        <button class="btn gold" id="chBtn">🎯 تحدي المعلم</button>
+      </div>
+    </div>
+
+    <div id="stage">
+      <canvas id="prism"></canvas>
+      <div class="atom" id="A1"><span class="sym"></span><span class="lab"></span></div>
+      <div class="atom" id="A2"><span class="sym"></span><span class="lab"></span></div>
+      <div class="e" id="e1"></div><div class="e" id="e2"></div>
+    </div>
+
+    <div id="scaleWrap">
+      <div id="scale"><div id="ptr"><i></i><span>0.00</span></div></div>
+      <div class="ticks">
+        <span style="left:0%">0</span><span style="left:12.12%">0.4</span>
+        <span style="left:51.5%">1.7</span><span style="left:100%">3.3</span>
+      </div>
+    </div>
+    <p class="note" style="text-align:center">مقياس ΔEN: بنفسجي = نقية | أخضر = غير قطبية | أزرق = قطبية | ذهبي = أيونية</p>
+  </div>
+
+  <div class="panel" id="result"></div>
+ </section>
+
+ <aside class="panel">
+   <h2>🧪 سجل الاكتشافات (<span id="cnt">0</span>)</h2>
+   <ul id="log"><li class="note">لا توجد تفاعلات بعد…</li></ul>
+ </aside>
+</main>
+
+<footer>
+  <!-- ✏ عدّل اسمك هنا قبل الرفع على GitHub -->
+  تصميم وبرمجة: <b id="authorName">اسم الطالب / المعلم</b> — مشروع الكيمياء، الصف الثاني الثانوي
+</footer>
+</div><!-- نهاية الإطار -->
+<div id="toast"></div>
+
+<!-- نافذة ملخص الدرس -->
+<div class="modal" id="summaryModal"><div class="mbox">
+  <div style="display:flex;justify-content:space-between"><h2>📘 ملخص درس الكهروسالبية والقطبية</h2><button class="btn" onclick="closeM('summaryModal')">✕ إغلاق</button></div>
+  <ul>
+    <li><b>الكهروسالبية:</b> مقياس لقدرة الذرة على جذب إلكترونات الرابطة الكيميائية نحوها (مقياس باولنج)، وأعلى قيمة للفلور (3.98).</li>
+    <li><b>التدرج في الجدول الدوري:</b> تزداد عبر الدورة من اليسار إلى اليمين، وتقل في المجموعة من الأعلى إلى الأسفل.</li>
+    <li><b>الفرق في الكهروسالبية (ΔEN):</b> يُحسب بالقيمة المطلقة |EN₁ − EN₂| ويحدد نوع الرابطة.</li>
+    <li><b>القطبية:</b> عند انجذاب الإلكترونات نحو الذرة الأعلى كهروسالبية تنشأ شحنة جزئية سالبة (δ−) عليها وموجبة (δ+) على الأخرى.</li>
+    <li><b>تنبيه:</b> وجود روابط قطبية لا يعني دائماً أن الجزيء قطبي؛ فالشكل الهندسي قد يلغي القطبية كما في CO₂ وCCl₄.</li>
+    <li><b>تنبيه:</b> القواعد أدناه تقريبية؛ فالرابطة بين لافلزين تكون تساهمية حتى لو زاد الفرق عن 1.7 (مثل HF)، والفلزات فيما بينها ترتبط برابطة فلزية.</li>
+  </ul>
+  <table>
+    <tr><th>نوع الرابطة</th><th>ΔEN</th><th>سلوك الإلكترونات</th><th>أمثلة</th></tr>
+    <tr><td style="color:var(--gold)">أيونية</td><td>&gt; 1.7</td><td>انتقال إلكترون من الفلز إلى اللافلز</td><td>Na–Cl، K–F، Mg–O</td></tr>
+    <tr><td style="color:var(--blue)">تساهمية قطبية</td><td>0.4 – 1.7</td><td>مشاركة غير متساوية</td><td>H–Cl، H–O، C–O</td></tr>
+    <tr><td style="color:var(--green)">تساهمية غير قطبية</td><td>أقل من 0.4</td><td>مشاركة متساوية تقريباً</td><td>C–H، N–Cl</td></tr>
+    <tr><td style="color:var(--purple)">تساهمية نقية</td><td>0</td><td>مشاركة متساوية تماماً</td><td>Cl–Cl، H–H، O–O</td></tr>
+  </table>
+  <h2>🔎 تدرج الكهروسالبية في الجدول الدوري (اضغط على عنصر)</h2>
+  <div id="ptable"></div><div id="pread">مرّر المؤشر أو اضغط على عنصر</div>
+  <p class="note" style="text-align:center">عبر الدورة ←  تزداد (Li 0.98 → F 3.98) | في المجموعة ↓ تقل (Na 0.93 &gt; K 0.82 &gt; Cs 0.79)</p>
+</div></div>
+
+<!-- نافذة بطاقة الطباعة -->
+<div class="modal" id="reportModal"><div class="mbox">
+  <div class="noprint" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">
+    <h2>🖨 بطاقة الملخص للطباعة</h2>
+    <div style="display:flex;gap:8px"><button class="btn go" onclick="window.print()">طباعة / حفظ PDF</button><button class="btn" onclick="closeM('reportModal')">✕ إغلاق</button></div>
+  </div>
+  <h2 style="text-align:center">ChemBattle — ملخص درس الكهروسالبية والقطبية</h2>
+  <p>اسم الطالب / المعلم: <input class="name" id="studentName" placeholder="اكتب الاسم هنا"> &nbsp; التاريخ: <span id="rDate"></span></p>
+  <h2>القواعد الأساسية</h2>
+  <ul>
+    <li>ΔEN = |EN₁ − EN₂|</li>
+    <li>ΔEN &gt; 1.7: رابطة أيونية غالباً (انتقال إلكترون).</li>
+    <li>0.4 ≤ ΔEN ≤ 1.7: رابطة تساهمية قطبية (δ+ / δ−).</li>
+    <li>0 &lt; ΔEN &lt; 0.4: رابطة تساهمية غير قطبية.</li>
+    <li>ΔEN = 0: رابطة تساهمية نقية.</li>
+  </ul>
+  <h2>المركبات والروابط التي جرّبتها</h2>
+  <div id="rTable"></div>
+</div></div>
+
+<script>
+/* ============================================================
+   1) خلفية الموشور — نسخة JavaScript خالصة من مكوّن PrismBackground
+   (WebGL مباشر بدون React أو OGL ليعمل الملف وحده على GitHub Pages)
+   عدّل القيم من هنا: ============================================ */
+(function(){
+  const CFG={height:3.5,baseWidth:5.5,scale:3.6,glow:1,bloom:1,timeScale:.5,noise:.08,
+             colorFreq:1,hoverStrength:1.5,inertia:.05};
+  const cv=document.getElementById('prism');
+  const gl=cv.getContext('webgl',{alpha:true,antialias:false,premultipliedAlpha:true});
+  if(!gl){cv.remove();return;}
+  const f=n=>Number(n).toFixed(6);
+  const BH=CFG.baseWidth*.5, H=CFG.height;
+  const vs='attribute vec2 position;void main(){gl_Position=vec4(position,0.,1.);}';
+  const fs=`precision highp float;
+  uniform vec2 iResolution;uniform float iTime;uniform mat3 uRot;
+  const float H=${f(H)},BH=${f(BH)},GLOW=${f(CFG.glow*CFG.bloom)},NOISE=${f(CFG.noise)},CF=${f(CFG.colorFreq)},TS=${f(CFG.timeScale)},SC=${f(CFG.scale)};
+  vec4 tanh4(vec4 x){vec4 e=exp(2.0*x);return (e-1.0)/(e+1.0);}
+  float rand(vec2 c){return fract(sin(dot(c,vec2(12.9898,78.233)))*43758.5453123);}
+  float sdOcta(vec3 p){
+    vec3 q=vec3(abs(p.x)/BH,abs(p.y)/H,abs(p.z)/BH);
+    return (q.x+q.y+q.z-1.0)*min(BH,H)*0.5773502691896258;}
+  float sdPyr(vec3 p){return max(sdOcta(p),-p.y);}
+  void main(){
+    vec2 f=(gl_FragCoord.xy-0.5*iResolution.xy)/(iResolution.y*0.1*SC);
+    float z=5.0,d=0.0;vec3 p;vec4 o=vec4(0.0);
+    float t=iTime*TS;
+    mat2 wob=mat2(cos(t),cos(t+33.0),cos(t+11.0),cos(t));
+    for(int i=0;i<100;i++){
+      p=vec3(f,z);p.xz=p.xz*wob;p=uRot*p;
+      vec3 q=p;q.y+=H*0.25;
+      d=0.1+0.2*abs(sdPyr(q));z-=d;
+      o+=(sin((p.y+z)*CF+vec4(0.0,1.0,2.0,3.0))+1.0)/d;
+    }
+    o=tanh4(o*o*GLOW/1e5);
+    vec3 col=o.rgb+(rand(gl_FragCoord.xy+vec2(iTime))-0.5)*NOISE;
+    col=clamp(col,0.0,1.0);
+    float L=dot(col,vec3(0.2126,0.7152,0.0722));
+    col=clamp(mix(vec3(L),col,1.5),0.0,1.0);
+    gl_FragColor=vec4(col,max(col.r,max(col.g,col.b)));
+  }`;
+  const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o;};
+  const pr=gl.createProgram();
+  gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));
+  gl.linkProgram(pr);
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){cv.remove();return;}
+  gl.useProgram(pr);
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(pr,'position');
+  gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  const uRes=gl.getUniformLocation(pr,'iResolution'),uT=gl.getUniformLocation(pr,'iTime'),uR=gl.getUniformLocation(pr,'uRot');
+  function resize(){ // دقة منخفضة عمداً لأنه خلفية (أداء أفضل على الهواتف)
+    const k=innerWidth<700?.6:.8;
+    const host=cv.parentElement;cv.width=Math.max(2,Math.floor((host.clientWidth||innerWidth)*k));cv.height=Math.max(2,Math.floor((host.clientHeight||innerHeight)*k));
+    gl.viewport(0,0,cv.width,cv.height);gl.uniform2f(uRes,cv.width,cv.height);
+  }
+  new ResizeObserver(resize).observe(cv.parentElement);resize();
+  const rot=new Float32Array(9);
+  function euler(yw,pt,rl){
+    const cy=Math.cos(yw),sy=Math.sin(yw),cx=Math.cos(pt),sx=Math.sin(pt),cz=Math.cos(rl),sz=Math.sin(rl);
+    rot.set([cy*cz+sy*sx*sz,cx*sz,-sy*cz+cy*sx*sz, -cy*sz+sy*sx*cz,cx*cz,sy*sz+cy*sx*cz, sy*cx,-sx,cy*cx]);
+  }
+  let yaw=0,pitch=0,ty=0,tp=0;
+  addEventListener('pointermove',e=>{ // تتبّع المؤشر مع قصور ذاتي (وضع hover)
+    ty=-((e.clientX/innerWidth)*2-1)*.6*CFG.hoverStrength;
+    tp=((e.clientY/innerHeight)*2-1)*.6*CFG.hoverStrength;
+  },{passive:true});
+  const t0=performance.now();let last=0,raf=0;
+  function frame(now){
+    raf=requestAnimationFrame(frame);
+    if(now-last<33)return; last=now; // ~30 إطار/ثانية
+    yaw+=(ty-yaw)*CFG.inertia;pitch+=(tp-pitch)*CFG.inertia;
+    euler(yaw,pitch,0);
+    gl.uniformMatrix3fv(uR,false,rot);gl.uniform1f(uT,(now-t0)/1000);
+    gl.drawArrays(gl.TRIANGLES,0,3);
+  }
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){euler(0,0,0);gl.uniformMatrix3fv(uR,false,rot);gl.uniform1f(uT,1);gl.drawArrays(gl.TRIANGLES,0,3);return;}
+  document.addEventListener('visibilitychange',()=>{ // إيقاف عند إخفاء التبويب
+    if(document.hidden){cancelAnimationFrame(raf);raf=0}else if(!raf)raf=requestAnimationFrame(frame);
+  });
+  raf=requestAnimationFrame(frame);
+})();
+
+/* ============================================================
+   2) قاعدة بيانات العناصر
+   ============================================================ */
+const EL=[
+ {s:'F',n:'الفلور',en:3.98,t:'لافلز',z:9},{s:'O',n:'الأكسجين',en:3.44,t:'لافلز',z:8},
+ {s:'Cl',n:'الكلور',en:3.16,t:'لافلز',z:17},{s:'N',n:'النيتروجين',en:3.04,t:'لافلز',z:7},
+ {s:'C',n:'الكربون',en:2.55,t:'لافلز',z:6},{s:'H',n:'الهيدروجين',en:2.20,t:'لافلز',z:1},
+ {s:'Na',n:'الصوديوم',en:0.93,t:'فلز',z:11},{s:'K',n:'البوتاسيوم',en:0.82,t:'فلز',z:19},
+ {s:'Cs',n:'السيزيوم',en:0.79,t:'فلز',z:55},{s:'Mg',n:'المغنيسيوم',en:1.31,t:'فلز',z:12}
+];
+const TYPES={
+ ionic:{name:'رابطة أيونية غالباً',c:'#e09a0b'},
+ polar:{name:'رابطة تساهمية قطبية',c:'#3b8fd6'},
+ nonpolar:{name:'رابطة تساهمية غير قطبية',c:'#2fa878'},
+ pure:{name:'رابطة تساهمية نقية',c:'#8f6df0'}
+};
+const $=s=>document.querySelector(s);
+const slot=[null,null];let busy=false;
+const log=[];
+
+/* صوت بسيط بـ Web Audio API (بدون ملفات خارجية) */
+let ac;
+function tone(f,d,type='sine',v=.12,delay=0){
+  try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+delay;
+    o.type=type;o.frequency.value=f;o.connect(g);g.connect(ac.destination);
+    g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.start(t);o.stop(t+d);}catch(e){}
+}
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',2000);}
+function openM(id){$('#'+id).classList.add('open')}
+function closeM(id){$('#'+id).classList.remove('open')}
+
+/* ============================================================
+   3) البطاقات والخانات (نقر + سحب وإفلات)
+   ============================================================ */
+EL.forEach((e,i)=>{
+  const d=document.createElement('div');d.className='card';d.draggable=true;
+  d.style.setProperty('--c',e.t==='فلز'?'var(--gold)':'var(--blue)');
+  d.innerHTML=`<b>${e.s}</b><div>${e.n}</div><small>EN = ${e.en.toFixed(2)}</small><small>${e.t} • ${e.z}</small>`;
+  d.onclick=()=>{ if(busy)return; if(slot[0]===null)slot[0]=i;else if(slot[1]===null)slot[1]=i;else slot[1]=i; tone(600,.1); drawSlots();};
+  d.ondragstart=ev=>ev.dataTransfer.setData('text/plain',i);
+  $('#cards').appendChild(d);
+});
+document.querySelectorAll('.slot').forEach(s=>{
+  const k=+s.dataset.k;
+  s.ondragover=e=>{e.preventDefault();s.classList.add('over')};
+  s.ondragleave=()=>s.classList.remove('over');
+  s.ondrop=e=>{e.preventDefault();s.classList.remove('over');if(busy)return;const i=+e.dataTransfer.getData('text/plain');if(!isNaN(i)){slot[k]=i;tone(600,.1);drawSlots();}};
+  s.onclick=()=>{if(!busy){slot[k]=null;drawSlots();}};
+});
+function drawSlots(){
+  [0,1].forEach(k=>{
+    const s=$('#s'+k),e=EL[slot[k]];
+    s.classList.toggle('full',!!e);
+    s.innerHTML=e?`<div><b style="color:${e.t==='فلز'?'var(--gold)':'var(--blue)'}">${e.s}</b>${e.n}<br><small>EN = ${e.en.toFixed(2)}</small></div>`
+                 :`<div>${k?'الذرة الثانية':'الذرة الأولى'}<br><small>اسحب بطاقة أو انقر</small></div>`;
+  });
+  // معاينة الذرتين على المسرح: الذرة الأولى يميناً والثانية يساراً
+  setAtom($('#A1'),EL[slot[0]],75);setAtom($('#A2'),EL[slot[1]],25);
+  ['e1','e2'].forEach(id=>$('#'+id).style.opacity=0);
+}
+function setAtom(a,e,x){
+  a.style.left=x+'%';a.style.opacity=e?1:0;a.style.borderColor='#38bdf8';a.style.boxShadow='0 0 22px #38bdf8';
+  a.querySelector('.sym').textContent=e?e.s:'';a.querySelector('.lab').textContent='';
+}
+$('#clrBtn').onclick=()=>{if(busy)return;slot[0]=slot[1]=null;drawSlots();$('#ptr').style.left='0%';};
+drawSlots();
+
+/* ============================================================
+   4) الحساب والأنيميشن
+   ============================================================ */
+function classify(d){return d===0?'pure':d<0.4?'nonpolar':d<=1.7?'polar':'ionic';}
+function react(){
+  if(busy||(ch.on&&ch.wait))return;
+  if(slot[0]===null||slot[1]===null){toast('اختر ذرتين أولاً');return;}
+  const a=EL[slot[0]],b=EL[slot[1]];
+  const d=Math.round(Math.abs(a.en-b.en)*100)/100, type=classify(d);
+  busy=true;tone(220,.5,'triangle',.1);
+  animate(a,b,d,type);
+  setTimeout(()=>{showResult(a,b,d,type);addLog(a,b,d,type);busy=false;if(ch.on)evalChallenge(type);},2200);
+}
+$('#goBtn').onclick=react;
+
+function animate(a,b,d,type){
+  const A1=$('#A1'),A2=$('#A2'),e1=$('#e1'),e2=$('#e2'),col=TYPES[type].c;
+  const xa=75,xb=25,hiA=a.en>=b.en,hiX=hiA?xa:xb,loX=hiA?xb:xa,dir=Math.sign(hiX-loX)||1;
+  [e1,e2].forEach(e=>{e.style.transition='none';e.style.opacity=0});
+  A1.querySelector('.lab').textContent=A2.querySelector('.lab').textContent='';
+  $('#ptr').style.transition='none';$('#ptr').style.left='0%';
+  const hiAtom=hiA?A1:A2,loAtom=hiA?A2:A1;
+  void e1.offsetWidth;
+  const go=(e,l,t)=>{e.style.transition='';e.style.left=l+'%';e.style.top=t+'%'};
+  const show=()=>{[e1,e2].forEach(e=>{e.style.transition='none'});};
+  if(type==='ionic'){
+    // الإلكترون ينتقل من الأقل كهروسالبية إلى الأعلى
+    e1.style.left=(loX+dir*9)+'%';e1.style.top='50%';e1.style.opacity=1;e2.style.opacity=0;
+    setTimeout(()=>{go(e1,hiX-dir*9,50);},100);
+    setTimeout(()=>{loAtom.querySelector('.lab').textContent='+';hiAtom.querySelector('.lab').textContent='−';
+      loAtom.style.borderColor='#f87171';hiAtom.style.borderColor='#34d399';},1800);
+  }else{
+    // الإلكترونان يبدآن عند ذرتيهما ثم يتجهان للمنتصف، ويميلان نحو الأعلى كهروسالبية
+    const shift=type==='polar'?dir*Math.min(16,d/1.7*16):type==='nonpolar'?dir*(d/0.4*3):0;
+    e1.style.left=(xa-10)+'%';e2.style.left=(xb+10)+'%';e1.style.top=e2.style.top='50%';
+    e1.style.opacity=e2.style.opacity=1;
+    setTimeout(()=>{go(e1,50+shift+2.5,42);go(e2,50+shift-2.5,58);},100);
+    setTimeout(()=>{
+      if(type==='polar'){loAtom.querySelector('.lab').textContent='δ+';hiAtom.querySelector('.lab').textContent='δ−';}
+      else if(type==='nonpolar'){A1.querySelector('.lab').textContent=A2.querySelector('.lab').textContent='δ≈0';}
+      else{A1.querySelector('.lab').textContent=A2.querySelector('.lab').textContent='0';}
+    },1800);
+  }
+  [A1,A2].forEach(x=>{if(type!=='ionic'){x.style.borderColor=col;x.style.boxShadow='0 0 28px '+col}});
+  // مؤشر المقياس
+  setTimeout(()=>{const p=$('#ptr');p.style.transition='';p.style.left=Math.min(d,3.3)/3.3*100+'%';p.querySelector('span').textContent='ΔEN = '+d.toFixed(2);},100);
+}
+
+function explain(a,b,d,type){
+  const hi=a.en>=b.en?a:b,lo=hi===a?b:a;
+  let t;
+  if(type==='ionic'){
+    t=`بسبب الفرق الكبير في الكهروسالبية (ΔEN = ${d.toFixed(2)} &gt; 1.7) انتزعت ذرة ${hi.n} (${hi.s}) إلكترون التكافؤ من ذرة ${lo.n} (${lo.s})، فصارت ${lo.s} أيوناً موجباً وصارت ${hi.s} أيوناً سالباً، وتجاذب الأيونان بقوة كهروستاتيكية مكوّنين رابطة أيونية.`;
+    if(a.t==='لافلز'&&b.t==='لافلز')t+=` ملاحظة: العنصران لافلزان، لذا تكون الرابطة عملياً تساهمية شديدة القطبية (مثل HF) رغم تجاوز الفرق 1.7.`;
+  }else if(type==='polar'){
+    t=`تتشارك الذرتان زوجاً من الإلكترونات لكنه ينجذب أكثر نحو ${hi.s} لأنها أعلى كهروسالبية (${hi.en.toFixed(2)} مقابل ${lo.en.toFixed(2)})، فتحمل ${hi.s} شحنة جزئية سالبة (δ−) وتحمل ${lo.s} شحنة جزئية موجبة (δ+)، فتصبح الرابطة قطبية.`;
+  }else if(type==='nonpolar'){
+    t=`الفرق في الكهروسالبية صغير جداً (ΔEN = ${d.toFixed(2)} &lt; 0.4)، فيتوزع الزوج الإلكتروني المشترك بين ${a.s} و${b.s} بالتساوي تقريباً، فلا تنشأ شحنات جزئية معتبرة وتكون الرابطة غير قطبية.`;
+  }else{
+    t=`ذرتان من العنصر نفسه (${a.n}) لهما الكهروسالبية نفسها (ΔEN = 0)، فتتشاركان الإلكترونات بتوازن تام في المنتصف وتتكون رابطة تساهمية نقية.`;
+  }
+  if(a.t==='فلز'&&b.t==='فلز')t+=` ملاحظة: اجتماع فلزين يكوّن في الواقع رابطة فلزية، ونتيجة المحاكاة هنا نظرية حسب قاعدة ΔEN.`;
+  return t;
+}
+function showResult(a,b,d,type){
+  const r=$('#result'),T=TYPES[type];
+  r.style.setProperty('--rc',T.c);r.style.display='block';
+  r.innerHTML=`<h3>📋 بطاقة الشرح العلمي: ${a.s} – ${b.s}</h3>
+   <div>قيمة الفرق في الكهروسالبية: <span class="big">ΔEN = ${d.toFixed(2)}</span></div>
+   <div>نوع الرابطة المتكونة: <b style="color:${T.c}">${T.name}</b></div>
+   <p style="margin-top:8px">${explain(a,b,d,type)}</p>`;
+  r.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function addLog(a,b,d,type){
+  const key=[a.s,b.s].sort().join('-');
+  if(log.some(l=>l.key===key))return;
+  log.push({key,a:a.s,b:b.s,d,type});
+  $('#cnt').textContent=log.length;
+  $('#log').innerHTML=log.map(l=>`<li>${l.a} – ${l.b} <b style="color:${TYPES[l.type].c}">${TYPES[l.type].name.replace(' غالباً','')}</b><span>${l.d.toFixed(2)}</span></li>`).join('');
+}
+
+/* ============================================================
+   5) وضع تحدي المعلم (20 ثانية لكل سؤال)
+   ============================================================ */
+const QS=[
+ {t:'polar',txt:'كوّن رابطة تساهمية قطبية!'},{t:'ionic',txt:'كوّن رابطة أيونية قوية!'},
+ {t:'nonpolar',txt:'كوّن رابطة تساهمية غير قطبية!'},{t:'pure',txt:'كوّن رابطة تساهمية نقية!'}
+];
+const TOTAL=6,TIME=20;
+let ch={on:false,wait:false,i:0,score:0,q:null,left:TIME,h:0};
+$('#chBtn').onclick=()=>{ch.on?endChallenge():startChallenge();};
+function startChallenge(){
+  clearInterval(ch.h);ch={on:true,wait:false,i:0,score:0,q:null,left:TIME,h:0};
+  $('#challenge').style.display='block';$('#chBtn').textContent='⏹ إنهاء التحدي';nextQ();
+}
+function endChallenge(){clearInterval(ch.h);ch.on=false;$('#challenge').style.display='none';$('#chBtn').textContent='🎯 تحدي المعلم';}
+function nextQ(){
+  if(ch.i>=TOTAL){
+    clearInterval(ch.h);const max=TOTAL*20;
+    $('#chQ').textContent='🏁 انتهى التحدي! نتيجتك: '+ch.score+' نقطة';
+    $('#chInfo').textContent=ch.score>=TOTAL*13?'ممتاز! أنت خبير في الروابط الكيميائية 🌟':ch.score>=TOTAL*7?'جيد جداً، واصل التدريب 👍':'حاول مرة أخرى بعد مراجعة الملخص 📘';
+    ch.wait=true;tone(523,.2,'sine',.15);tone(784,.4,'sine',.15,.2);return;
+  }
+  ch.q=QS[Math.floor(Math.random()*QS.length)];ch.i++;ch.wait=false;ch.left=TIME;
+  slot[0]=slot[1]=null;drawSlots();
+  $('#chQ').textContent=`السؤال ${ch.i}/${TOTAL}: ${ch.q.txt}`;
+  $('#chInfo').textContent='النقاط: '+ch.score;
+  clearInterval(ch.h);
+  ch.h=setInterval(()=>{
+    ch.left-=.1;$('#tbar i').style.width=Math.max(0,ch.left/TIME*100)+'%';
+    if(ch.left<=0&&!busy){clearInterval(ch.h);ch.wait=true;tone(180,.5,'sawtooth');
+      $('#chInfo').textContent='⏰ انتهى الوقت! النقاط: '+ch.score;setTimeout(nextQ,2200);}
+  },100);
+}
+function evalChallenge(type){
+  if(ch.wait)return;
+  clearInterval(ch.h);ch.wait=true;
+  const ok=type===ch.q.t,A=$('#arena');
+  if(ok){const pts=10+Math.ceil(ch.left/2);ch.score+=pts;
+    $('#chInfo').textContent=`✅ إجابة صحيحة! +${pts} نقطة (المجموع ${ch.score})`;
+    A.classList.remove('lose');A.classList.add('win');tone(523,.15);tone(659,.15,'sine',.12,.12);tone(784,.3,'sine',.12,.24);}
+  else{$('#chInfo').textContent=`❌ الرابطة المتكونة: ${TYPES[type].name}. النقاط: ${ch.score}`;
+    A.classList.remove('win');A.classList.add('lose');tone(200,.4,'sawtooth');}
+  setTimeout(()=>{A.classList.remove('win','lose');nextQ();},2800);
+}
+
+/* ============================================================
+   6) جدول دوري مصغّر + بطاقة الطباعة
+   ============================================================ */
+const PT=[
+ [['H',2.20],0,0,0,0,0,0,['He',null]],
+ [['Li',.98],['Be',1.57],['B',2.04],['C',2.55],['N',3.04],['O',3.44],['F',3.98],['Ne',null]],
+ [['Na',.93],['Mg',1.31],['Al',1.61],['Si',1.90],['P',2.19],['S',2.58],['Cl',3.16],['Ar',null]]
+];
+PT.flat().forEach(c=>{
+  const d=document.createElement('div');
+  if(!c){d.className='empty';}
+  else{d.textContent=c[0];
+    d.style.background=c[1]===null?'rgba(148,163,184,.08)':`rgba(63,155,118,${.08+c[1]/4*.8})`;
+    const say=()=>$('#pread').textContent=c[1]===null?c[0]+': لا توجد قيمة كهروسالبية معتمدة (غاز نبيل)':c[0]+': الكهروسالبية = '+c[1].toFixed(2);
+    d.onmouseenter=say;d.onclick=say;}
+  $('#ptable').appendChild(d);
+});
+function openReport(){
+  $('#rDate').textContent=new Date().toLocaleDateString('ar-SA');
+  $('#rTable').innerHTML=log.length?
+   '<table><tr><th>#</th><th>الرابطة</th><th>ΔEN</th><th>النوع</th></tr>'+log.map((l,i)=>`<tr><td>${i+1}</td><td>${l.a} – ${l.b}</td><td>${l.d.toFixed(2)}</td><td>${TYPES[l.type].name}</td></tr>`).join('')+'</table>'
+   :'<p class="note">لم تجرِّب أي تفاعل بعد — ابدأ من ساحة المعركة ثم أعد توليد البطاقة.</p>';
+  openM('reportModal');
+}
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+</script>
+</body>
+</html>
